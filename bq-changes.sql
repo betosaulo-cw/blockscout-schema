@@ -1,11 +1,10 @@
 CREATE TABLE public.logs (
 	"data" bytea NOT NULL,
 	"index" int4 NOT NULL,
-	"type" varchar(255) NULL,
-	first_topic varchar(255) NULL,
-	second_topic varchar(255) NULL,
-	third_topic varchar(255) NULL,
-	fourth_topic varchar(255) NULL,
+	first_topic bytea NULL,
+	second_topic bytea NULL,
+	third_topic bytea NULL,
+	fourth_topic bytea NULL,
 	inserted_at timestamp NOT NULL,
 	updated_at timestamp NOT NULL,
 	address_hash bytea NULL,
@@ -18,7 +17,7 @@ CREATE TABLE public.pending_block_operations (
 	block_hash bytea NOT NULL,
 	inserted_at timestamp NOT NULL,
 	updated_at timestamp NOT NULL,
-	fetch_internal_transactions bool NOT NULL,
+	block_number int4 NULL,
 );
 
 CREATE TABLE public.smart_contracts (
@@ -42,7 +41,12 @@ CREATE TABLE public.smart_contracts (
 	is_changed_bytecode bool DEFAULT false NULL,
 	bytecode_checked_at timestamp DEFAULT (now() AT TIME ZONE 'utc'::text) - '1 day'::interval NULL,
 	contract_code_md5 varchar(255) NOT NULL,
-	implementation_name varchar(255) NULL,
+	compiler_settings jsonb NULL,
+	verified_via_eth_bytecode_db bool NULL,
+	license_type int2 DEFAULT 1 NOT NULL,
+	verified_via_verifier_alliance bool NULL,
+	certified bool NULL,
+	is_blueprint bool NULL,
 );
 
 CREATE TABLE public.token_transfers (
@@ -51,7 +55,6 @@ CREATE TABLE public.token_transfers (
 	from_address_hash bytea NOT NULL,
 	to_address_hash bytea NOT NULL,
 	amount numeric NULL,
-	token_id numeric(78) NULL,
 	token_contract_address_hash bytea NOT NULL,
 	inserted_at timestamp NOT NULL,
 	updated_at timestamp NOT NULL,
@@ -59,11 +62,13 @@ CREATE TABLE public.token_transfers (
 	block_hash bytea NOT NULL,
 	amounts _numeric NULL,
 	token_ids _numeric NULL,
+	token_type varchar(255) NULL,
+	block_consensus bool DEFAULT true NULL,
 );
 
 CREATE TABLE public.tokens (
-	"name" varchar(255) NULL,
-	symbol varchar(255) NULL,
+	"name" text NULL,
+	symbol text NULL,
 	total_supply numeric NULL,
 	decimals numeric NULL,
 	"type" varchar(255) NOT NULL,
@@ -72,7 +77,12 @@ CREATE TABLE public.tokens (
 	inserted_at timestamp NOT NULL,
 	updated_at timestamp NOT NULL,
 	holder_count int4 NULL,
-	bridged bool NULL,
 	skip_metadata bool NULL,
+	fiat_value numeric NULL,
+	circulating_market_cap numeric NULL,
+	total_supply_updated_at_block int8 NULL,
+	icon_url varchar(255) NULL,
+	is_verified_via_admin_panel bool DEFAULT false NULL,
+	volume_24h numeric NULL,
 );
 
